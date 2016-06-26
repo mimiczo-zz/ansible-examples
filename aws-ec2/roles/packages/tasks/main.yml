@@ -1,0 +1,11 @@
+- name: Install list of packages
+  apt:
+    pkg: "{{ item }}"
+    state: installed
+    update-cache: yes
+  with_items:
+    - gcc
+    - openssl
+    - unzip
+    - zlib1g-dev
+    - libpcre3-dev

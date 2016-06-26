@@ -1,0 +1,10 @@
+---
+# provisioning for Target Hosts
+- name: Target provisioning play
+  hosts: mimiczo_ec2instances
+  become: yes
+  become_method: sudo
+  become_user: root
+  roles:
+    - packages
+    - common

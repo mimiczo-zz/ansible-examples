@@ -1,0 +1,17 @@
+- name: pam limits
+  pam_limits:
+    domain: "{{ item.domain }}"
+    limit_type: "{{ item.limit_type }}"
+    limit_item: "{{ item.limit_item }}"
+    value: "{{ item.value }}"
+  with_items:
+    - { domain: '*', limit_type: 'soft', limit_item: 'nofile', value: '65536' }
+    - { domain: '*', limit_type: 'hard', limit_item: 'nofile', value: '65536' }
+    - { domain: 'root', limit_type: 'soft', limit_item: 'nofile', value: '65536' }
+    - { domain: 'root', limit_type: 'hard', limit_item: 'nofile', value: '65536' }
+
+- name: configure pam
+  lineinfile:
+    dest: /etc/pam.d/common-session
+    line: 'session required pam_limits.so'
+    create: yes

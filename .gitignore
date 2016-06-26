@@ -1,0 +1,25 @@
+wap files
+*.swp
+*.swo
+
+# OSX
+.DS_Store
+
+# IDE
+.metadata
+bin/**
+tmp/**
+.settings/
+.loadpath
+.gradle/*
+.classpath
+.project
+*.idea
+*.iml
+
+# archive
+*.zip
+*.war
+
+# ansible
+*.retry

@@ -1,0 +1,15 @@
+[localhost]
+127.0.0.1
+
+# SSH Keys configuration
+[all_servers:vars]
+ansible_ssh_private_key_file=~/.ssh/keypair.pem
+ansible_ssh_user=ec2-user
+#ansible_ssh_user=ubuntu
+
+# Server configuration
+[all_servers:children]
+mimiczo_ec2instances
+
+[mimiczo_ec2instances]
+x.x.x.100

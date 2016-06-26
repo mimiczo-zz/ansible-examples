@@ -1,0 +1,82 @@
+- name: Set Instance Name
+  set_fact:
+    create_ec2_name1: "t2_micro_8gb_1"
+    create_ec2_name2: "t2_micro_10gb_1"
+
+- name: Creating EC2 instance {{ create_ec2_name1 }}
+  ec2:
+    keypair: "{{ keypair }}"
+    instance_type: "t2.micro"
+    instance_tags:
+      Name: "{{ tags_name }}-{{ create_ec2_name1 }}"
+      Env: "{{ tags_env }}"
+      Access: "{{ tags_access }}"
+      Team: "{{ tags_team }}"
+      Author: "{{ tags_author }}"
+    image: "{{ ubuntu_1404_LTS }}"
+    group_id: "{{ sg_id }}"
+    vpc_subnet_id: "{{ vpc_subnet_id }}"
+    assign_public_ip: yes
+    count: "1"
+    monitoring: no
+    region: "{{ region_name }}"
+    wait: yes
+    wait_timeout: 300
+    volumes:
+      - device_name: /dev/sda1
+        volume_type: gp2
+        volume_size: "8"
+    termination_protection: no
+  register: t2_micro_8gb_1
+
+- name: Creating EC2 instance {{ create_ec2_name2 }}
+  ec2:
+    keypair: "{{ keypair }}"
+    instance_type: "t2.micro"
+    instance_tags:
+      Name: "{{ tags_name }}-{{ create_ec2_name2 }}"
+      Env: "{{ tags_env }}"
+      Access: "{{ tags_access }}"
+      Team: "{{ tags_team }}"
+      Author: "{{ tags_author }}"
+    image: "{{ ubuntu_1404_LTS }}"
+    group_id: "{{ sg_id }}"
+    vpc_subnet_id: "{{ vpc_subnet_id }}"
+    assign_public_ip: yes
+    count: "1"
+    monitoring: no
+    region: "{{ region_name }}"
+    wait: yes
+    wait_timeout: 300
+    volumes:
+      - device_name: /dev/sda1
+        volume_type: gp2
+        volume_size: "10"
+    termination_protection: no
+  register: t2_micro_10gb_1
+
+- name: Add all instance public IPs to host group
+  add_host:
+    hostname: "{{ item.public_ip }}"
+    groups: "{{ target_groups_name }}"
+  with_items:
+    - "{{ t2_micro_8gb_1.instances }}"
+    - "{{ t2_micro_10gb_1.instances }}"
+
+- name: Wait for SSH to come up
+  wait_for:
+    host: "{{ item.public_ip }}"
+    port: 22
+    delay: 60
+    timeout: 320
+    state: started
+  with_items:
+    - "{{ t2_micro_8gb_1.instances }}"
+    - "{{ t2_micro_10gb_1.instances }}"
+
+- name: Debug ec2
+  debug:
+    msg: "{{ item }}"
+  with_items:
+    - "{{ t2_micro_8gb_1 }}"
+    - "{{ t2_micro_10gb_1 }}"

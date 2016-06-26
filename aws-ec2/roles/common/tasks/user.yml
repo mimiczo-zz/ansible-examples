@@ -1,0 +1,5 @@
+- name: create a new group
+  group: name=mimiczo state=present
+
+- name: create a new user
+  user: name=mimiczo state=present groups="sudo" password=mimiczo

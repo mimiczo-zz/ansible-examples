@@ -1,0 +1,8 @@
+---
+# Create AWS resources and provisioning for Result Resources.
+- name: AWS resources management with Ansible
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  roles:
+    - ec2

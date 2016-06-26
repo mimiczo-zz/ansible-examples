@@ -1,0 +1,33 @@
+- name: Locales
+  locale_gen:
+    name: ko_KR.UTF-8
+    state: present
+
+- name: Config Timezone
+  file:
+    src: /usr/share/zoneinfo/Asia/Seoul
+    dest: /etc/localtime
+    state: link
+    force: yes
+
+- name: locale set
+  lineinfile:
+    dest: /etc/sysconfig/i18n
+    regexp: '^'
+    line: 'LANG="ko_KR.UTF-8"'
+    state: present
+    create: yes
+  # when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Clock set
+  lineinfile:
+    dest: /etc/sysconfig/clock
+    state: present
+    create: yes
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^ZONE=', line: 'ZONE="Asia/Seoul"' }
+    - { regexp: '^UTC=', line: 'UTC=false' }
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
